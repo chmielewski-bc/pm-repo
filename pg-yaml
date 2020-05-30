@@ -1,63 +1,37 @@
----
-apiVersion: v1
-kind: Service
+apiVersion: apps/v1
+kind: StatefulSet
 metadata:
-  name: postgresql
-  labels:
-    app: gitlab
+  name: postgres-demo
 spec:
-  ports:
-    - port: 5432
+  serviceName: "postgres"
+  replicas: 2
   selector:
-    app: gitlab
-    tier: postgreSQL
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: postgres-claim
-  labels:
-    app: gitlab
-spec:
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 10Gi
-  storageClassName: default
----
-apiVersion: extensions/v1beta1
-kind: Deployment
-metadata:
-  name: postgresql
-  labels:
-    app: gitlab
-spec:
-  strategy:
-    type: Recreate
+    matchLabels:
+      app: postgres
   template:
     metadata:
       labels:
-        app: gitlab
-        tier: postgreSQL
+        app: postgres
     spec:
       containers:
-        - image: postgres:9.6.2-alpine
-          name: postgresql
-          env:
-            - name: POSTGRES_USER
-              value: postgres
-            - name: POSTGRES_DB
-              value: tpcc
-            - name: POSTGRES_PASSWORD
-              value: postgres
-          ports:
-            - containerPort: 5432
-              name: postgresql
-          volumeMounts:
-            - name: postgresql
-              mountPath: /var/lib/postgresql/data
-      volumes:
-        - name: postgresql
-          persistentVolumeClaim:
-            claimName: postgres-claim
+      - name: postgres
+        image: postgres:latest
+        envFrom:
+          - configMapRef:
+              name: postgres-config-demo
+        ports:
+        - containerPort: 5432
+          name: postgredb
+        volumeMounts:
+        - name: postgredb
+          mountPath: /var/lib/postgresql/data
+          subPath: postgres
+  volumeClaimTemplates:
+  - metadata:
+      name: postgredb
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: default
+      resources:
+        requests:
+          storage: 5Gi
