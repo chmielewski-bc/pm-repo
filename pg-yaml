@@ -4,7 +4,7 @@ metadata:
   name: postgres-demo
 spec:
   serviceName: "postgres"
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: postgres
@@ -19,6 +19,13 @@ spec:
         envFrom:
           - configMapRef:
               name: postgres-config-demo
+        env:
+          - name: POSTGRES_USER
+            value: postgres
+          - name: POSTGRES_DB
+            value: tpcc
+          - name: POSTGRES_PASSWORD
+            value: postgres
         ports:
         - containerPort: 5432
           name: postgredb
