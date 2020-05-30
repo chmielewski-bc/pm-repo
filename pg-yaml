@@ -46,11 +46,11 @@ spec:
           name: postgresql
           env:
             - name: POSTGRES_USER
-              value: gitlab
+              value: postgres
             - name: POSTGRES_DB
-              value: gitlabhq_production
+              value: tpcc
             - name: POSTGRES_PASSWORD
-              value: gitlab
+              value: postgres
           ports:
             - containerPort: 5432
               name: postgresql
