@@ -152,7 +152,7 @@ spec:
       resources:
         requests:
           storage: 10Gi
-      storageClassName: managed-premium
+      storageClassName: default
 
 ---
 apiVersion: v1
@@ -293,4 +293,4 @@ spec:
       resources:
         requests:
           storage: 10Gi
-      storageClassName: managed-premium
+      storageClassName: default
